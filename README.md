@@ -1,51 +1,29 @@
-# 🚀 Portfolio Pro: Arquitectura CI/CD Inmutable y Blindada
+# 🏗️ Documentación de Infraestructura: CI/CD Blindado
 
-Este proyecto no es solo un portfolio; es una infraestructura completa de despliegue continuo (CI/CD) diseñada para ser **segura, eficiente y automatizada**. El sistema se encarga de compilar, subir y actualizar la aplicación en un servidor remoto (Oracle Cloud) sin intervención humana.
+## 1. Presentación
+Este proyecto implementa un pipeline de **Integración y Despliegue Continuo (CI/CD)** automatizado. Su función principal es detectar cualquier cambio en el código fuente, empaquetarlo en una imagen ligera y desplegarlo en un servidor remoto de forma segura y sin intervención manual.
 
+Aunque este flujo está optimizado para **Portainer** sobre **Oracle Cloud**, su lógica basada en contenedores e imágenes es totalmente compatible con entornos de **Kubernetes**, lo que lo hace una solución escalable y profesional.
 
+> **¿Por qué este proyecto?** En lugar de subir archivos por FTP o entrar por SSH, este sistema garantiza que el servidor siempre tenga la versión exacta del código que está en la rama principal, eliminando el error humano.
 
-## 🏗️ Arquitectura del Sistema
+---
 
-El flujo de despliegue sigue una estrategia de **Infraestructura Inmutable**:
+## 2. Tecnologías y Estructura
+Para que este sistema sea robusto, se han integrado herramientas líderes en la industria:
 
-1.  **Code Push**: Al subir cambios a la rama `main`, se dispara un flujo en **GitHub Actions**.
-2.  **Multi-Arch Build**: GitHub compila una imagen Docker optimizada para **ARM64** (arquitectura de los servidores Oracle Cloud).
-3.  **Registry**: La imagen se almacena en **Docker Hub**.
-4.  **Secure Webhook**: GitHub envía una señal cifrada a **Portainer** para indicar que hay una nueva versión disponible.
-5.  **Auto-Update**: Portainer detiene el contenedor antiguo, descarga la nueva imagen y levanta el servicio en milisegundos.
-
-## 🛡️ Seguridad y Blindaje (Cloudflare Zero Trust)
-
-Para evitar que el servidor esté expuesto a internet, se ha implementado un esquema de seguridad de "Confianza Cero":
-
-*   **Service Tokens**: El acceso al Webhook de Portainer está protegido por Cloudflare Zero Trust. Solo GitHub Actions posee las llaves (`Client ID` y `Client Secret`) para pasar.
-*   **WAF Skip Rules**: Se ha configurado una regla personalizada en el Firewall de Cloudflare para omitir el "Bot Fight Mode" exclusivamente en la ruta del Webhook, permitiendo que la automatización pase sin enfrentar desafíos de Captcha.
-*   **User-Agent Masking**: La petición de despliegue utiliza un User-Agent de navegador moderno para integrarse de forma natural con las políticas de tráfico de la red.
-
-## 🛠️ Tecnologías Utilizadas
-
-| Componente | Tecnología |
+### Stack Tecnológico
+| Herramienta | Función |
 | :--- | :--- |
-| **Runtime** | Docker & Docker Compose |
-| **Orquestación** | Portainer |
-| **CI/CD** | GitHub Actions |
-| **Infraestructura** | Oracle Cloud (ARM64) |
-| **Seguridad/Red** | Cloudflare Zero Trust & WAF |
+| **GitHub Actions** | Orquestador de las tareas de automatización. |
+| **Docker & Buildx** | Creación de imágenes multiplataforma (Soporte nativo para ARM64/Oracle). |
+| **Docker Hub** | Registro centralizado de versiones de la aplicación. |
+| **Portainer** | Agente de despliegue y gestión de contenedores en el host. |
+| **Cloudflare Zero Trust** | Túnel de seguridad que blinda el acceso al servidor. |
 
-## ⚙️ Configuración del Pipeline
-
-El archivo de configuración se encuentra en `.github/workflows/deploy.yml`. Para que funcione, es necesario configurar los siguientes **Secrets** en el repositorio de GitHub:
-
-*   `DOCKER_USER`: Usuario de Docker Hub.
-*   `DOCKER_PASSWORD`: Token de acceso de Docker Hub.
-*   `CF_CLIENT_ID`: ID del Service Token de Cloudflare.
-*   `CF_CLIENT_SECRET`: Secret del Service Token de Cloudflare.
-
-## 📋 Comandos de Mantenimiento
-
-Si necesitas disparar el despliegue manualmente desde tu terminal local:
-```bash
-curl -X POST "[https://tu-url-webhook.com](https://tu-url-webhook.com)" \
-  -A "Mozilla/5.0" \
-  -H "CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}" \
-  -H "CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}"
+### Estructura del Proyecto
+```text
+├── .github/workflows/deploy.yml  # Configuración del Pipeline
+├── Dockerfile                    # Receta de construcción de la imagen
+├── docker-compose.yml            # Definición del servicio en el servidor
+└── src/                          # Código fuente de la aplicación
