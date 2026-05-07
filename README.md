@@ -54,12 +54,31 @@ Finalmente, orquestamos todo en el archivo `.github/workflows/deploy.yml`. Este 
 
 
 ---
+
 ##  Por qué esta arquitectura es "Enterprise Ready"
 
 1. **Eficiencia de Costes:** El pipeline está diseñado para correr sobre la capa gratuita de Oracle Cloud y Docker Hub, eliminando costes de infraestructura innecesarios.
 2. **Seguridad Multi-capa:** La seguridad no depende solo de una contraseña, sino de una combinación de Túneles, Service Tokens y ocultación de la IP real del servidor.
 3. **Escalabilidad:** Aunque actualmente despliega un portfolio, el mismo flujo es capaz de gestionar microservicios complejos con solo duplicar los pasos de compilación.
 4. **Mantenibilidad:** El uso de imágenes inmutables permite realizar un **Rollback** instantáneo a la versión anterior si algo falla en producción, simplemente cambiando el tag de la imagen en Portainer.
+5. 
+---
 
+##  5. Decisiones Técnicas y Criterios de Diseño
 
+En el desarrollo de esta infraestructura se han tomado decisiones estratégicas para garantizar un entorno de nivel profesional, priorizando la seguridad y la eficiencia de costes:
+
+###  Seguridad: Zero Trust vs. Exposición de Puertos
+A diferencia de los despliegues básicos donde se abren puertos en el firewall (exponiendo el servidor a ataques de fuerza bruta), este proyecto implementa **Cloudflare Zero Trust**.
+* **Criterio:** "Invisible al público". El panel de gestión (Portainer) no tiene una IP pública expuesta.
+* **Service Tokens:** Se han sustituido las contraseñas tradicionales por **tokens de servicio**. Esto permite que el pipeline tenga acceso "Headless" (sin humano) de forma segura.
+
+###  Infraestructura Inmutable
+El pipeline sigue estrictamente el concepto de infraestructura inmutable.
+* **Criterio:** Nunca se modifica el código directamente dentro del contenedor. 
+* **Beneficio:** Cada despliegue es una copia limpia y nueva. Esto permite realizar un **Rollback** (volver atrás) instantáneo simplemente seleccionando el tag de la imagen anterior en Docker Hub si algo falla en producción.
+
+###  Gestión de Secretos y Cumplimiento
+Ninguna credencial, token o ID está escrito en el código fuente.
+* **Implementación:** Se utiliza el almacén cifrado de **GitHub Secrets**. Esto demuestra el cumplimiento con las normativas de seguridad actuales, evitando filtraciones accidentales de credenciales en el historial de Git.
 
