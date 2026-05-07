@@ -52,3 +52,14 @@ Finalmente, orquestamos todo en el archivo `.github/workflows/deploy.yml`. Este 
 
 > **<img width="1434" height="761" alt="image" src="https://github.com/user-attachments/assets/40dbaaff-4665-4761-a86c-c81c387a8596" />
 
+
+---
+## 💡 Por qué esta arquitectura es "Enterprise Ready"
+
+1. **Eficiencia de Costes:** El pipeline está diseñado para correr sobre la capa gratuita de Oracle Cloud y Docker Hub, eliminando costes de infraestructura innecesarios.
+2. **Seguridad Multi-capa:** La seguridad no depende solo de una contraseña, sino de una combinación de Túneles, Service Tokens y ocultación de la IP real del servidor.
+3. **Escalabilidad:** Aunque actualmente despliega un portfolio, el mismo flujo es capaz de gestionar microservicios complejos con solo duplicar los pasos de compilación.
+4. **Mantenibilidad:** El uso de imágenes inmutables permite realizar un **Rollback** instantáneo a la versión anterior si algo falla en producción, simplemente cambiando el tag de la imagen en Portainer.
+
+
+
