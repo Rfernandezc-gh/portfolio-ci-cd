@@ -61,7 +61,7 @@ Finalmente, orquestamos todo en el archivo `.github/workflows/deploy.yml`. Este 
 2. **Seguridad Multi-capa:** La seguridad no depende solo de una contraseña, sino de una combinación de Túneles, Service Tokens y ocultación de la IP real del servidor.
 3. **Escalabilidad:** Aunque actualmente despliega un portfolio, el mismo flujo es capaz de gestionar microservicios complejos con solo duplicar los pasos de compilación.
 4. **Mantenibilidad:** El uso de imágenes inmutables permite realizar un **Rollback** instantáneo a la versión anterior si algo falla en producción, simplemente cambiando el tag de la imagen en Portainer.
-5. 
+   
 ---
 
 ##  5. Decisiones Técnicas y Criterios de Diseño
