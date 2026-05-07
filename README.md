@@ -29,9 +29,11 @@ Para conseguir un despliegue 100% automatizado y seguro, la infraestructura se h
 
 ### Fase A: El Receptor (Portainer Webhook)
 Lo primero es hacer que el servidor tenga un oido para que sepa cuándo debe actualizar un contenedor o stack. Para ello, activamos la opción de **Service Webhook** dentro de la configuración del Stack en Portainer. Esto genera una URL única.
-* **¿Por qué se hace esto?** En infraestructuras tradicionales, actualizar implica conectarse al servidor por SSH, descargar la nueva imagen y reiniciar los servicios manualmente. El Webhook automatiza todo este proceso: al recibir una simple petición, Portainer hace todo el trabajo pesado de forma desatendida.
+* **¿Por qué se hace esto?** En infraestructuras tradicionales, actualizar implica conectarse al servidor por SSH, descargar la nueva imagen y reiniciar los servicios manualmente. El Webhook automatiza todo este proceso: al recibir una simple petición, Portainer hace todo el trabajo pesado de forma desatendida.* 
+
 
 > **<img width="916" height="515" alt="Screenshot 2026-05-07 102221" src="https://github.com/user-attachments/assets/4097e8eb-c619-4ab0-a571-454b2fe9a9a6" />
+
 
 
 ### Fase B: El Portero de Seguridad (Cloudflare Zero Trust)
