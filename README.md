@@ -25,7 +25,7 @@ Para que este sistema sea robusto, se han integrado herramientas líderes en la 
 
 ## 3. Procedimiento Paso a Paso y Lógica Técnica
 
-Para conseguir un despliegue 100% automatizado y seguro, la infraestructura se ha configurado en las siguientes 4 fases:
+Para conseguir un despliegue 100% automatizado y seguro, la infraestructura se ha configurado en las siguientes 3 fases:
 
 ### Fase A: El Receptor (Portainer Webhook)
 Lo primero es hacer que el servidor tenga un oido para que sepa cuándo debe actualizar un contenedor o stack. Para ello, activamos la opción de **Service Webhook** dentro de la configuración del Stack en Portainer. Esto genera una URL única.
