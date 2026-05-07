@@ -1,4 +1,4 @@
-# 🏗️ Documentación de Infraestructura: CI/CD Blindado
+#  Documentación de Infraestructura: CI/CD Blindado
 
 ## 1. Presentación
 Este proyecto implementa un pipeline de **Integración y Despliegue Continuo (CI/CD)** automatizado en github actions. Su función principal es detectar cualquier cambio en el código fuente, empaquetarlo en una imagen ligera y desplegarlo en un servidor remoto de forma segura y sin intervención manual.
@@ -54,7 +54,7 @@ Finalmente, orquestamos todo en el archivo `.github/workflows/deploy.yml`. Este 
 
 
 ---
-## 💡 Por qué esta arquitectura es "Enterprise Ready"
+##  Por qué esta arquitectura es "Enterprise Ready"
 
 1. **Eficiencia de Costes:** El pipeline está diseñado para correr sobre la capa gratuita de Oracle Cloud y Docker Hub, eliminando costes de infraestructura innecesarios.
 2. **Seguridad Multi-capa:** La seguridad no depende solo de una contraseña, sino de una combinación de Túneles, Service Tokens y ocultación de la IP real del servidor.
