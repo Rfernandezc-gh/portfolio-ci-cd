@@ -38,21 +38,17 @@ Lo primero es hacer que el servidor tenga un oido para que sepa cuándo debe act
 
 ### Fase B: El Portero de Seguridad (Cloudflare Zero Trust)
 Tener una URL de Webhook expuesta a internet es un riesgo de seguridad crítico. Para solucionarlo, colocamos la ruta del Webhook (`/api/stacks/webhooks/*`) detrás de una política de **Cloudflare Zero Trust**. Creamos unas credenciales para máquinas llamadas **Service Tokens** (`Client ID` y `Client Secret`).
-* **¿Por qué se hace esto?** Para implementar una arquitectura de "Confianza Cero". Si un atacante descubre la URL del Webhook e intenta dispararlo, Cloudflare le bloqueará el acceso al instante. Solo nuestro pipeline, que posee las llaves criptográficas ocultas, puede atravesar el túnel y llegar al servidor.
+* **¿Por qué se hace esto?** Para implementar una arquitectura segura, Si un atacante descubre la URL del Webhook e intenta dispararlo, Cloudflare le bloqueará el acceso al instante. Solo nuestro pipeline, que posee las llaves criptográficas ocultas, puede atravesar el túnel y llegar al servidor.
 
-> **📸 [INSERTA AQUÍ LA CAPTURA]:** Panel de Cloudflare Zero Trust mostrando la regla de acceso (Service Auth) vinculada al Webhook.
+> **<img width="1048" height="229" alt="image" src="https://github.com/user-attachments/assets/aa6796e9-643c-446f-b744-252c52dd0d9f" />
 
-### Fase C: Evasión de Sistemas Antibots (WAF Bypass)
-Cloudflare cuenta con un **Bot Fight Mode** que bloquea peticiones automatizadas (como las que hace GitHub) lanzando un desafío Captcha ("Just a moment..."). Para que nuestro pipeline no se quede atascado en este paso, creamos una **Regla WAF (Custom Rule)** con la acción **Skip** (Omitir) exclusivamente para la ruta del Webhook.
-* **¿Por qué se hace esto?** Porque `curl` (la herramienta que usa GitHub para llamar al servidor) no es un navegador humano y no puede resolver Captchas. Al omitir el WAF solo en esta ruta, permitimos que la automatización llegue a la puerta de Zero Trust sin ser bloqueada por el camino, manteniendo el resto de la web protegida contra bots.
 
-> **📸 [INSERTA AQUÍ LA CAPTURA]:** Regla del WAF de Cloudflare configurada como 'Skip' para el path del webhook, desactivando el Bot Fight Mode.
-
-### Fase D: El Motor de Construcción (GitHub Actions)
+### Fase C: El Motor de Construcción y Autenticación (GitHub Actions)
 Finalmente, orquestamos todo en el archivo `.github/workflows/deploy.yml`. Este script automatiza el flujo completo cada vez que se hace un `git push` a la rama `main`:
-1.  **Setup QEMU & Buildx:** Prepara el entorno para compilar la imagen en arquitectura **ARM64** (requerido por servidores como Oracle Cloud Ampere).
-2.  **Build & Push:** Empaqueta el código en una imagen Docker y la sube al registro de Docker Hub.
-3.  **Trigger Webhook:** Ejecuta el comando `curl` disfrazado con un *User-Agent* de navegador, adjuntando las llaves de Zero Trust para activar la actualización en Portainer.
-* **¿Por qué se hace esto?** Es el núcleo de la filosofía CI/CD (Integración y Despliegue Continuo). Garantiza que el código de producción sea exactamente el mismo que el del repositorio, compilado en un entorno limpio e inmutable.
+1.  **Setup QEMU & Buildx:** Prepara el entorno para compilar la imagen en arquitectura **ARM64** (requerido por servidores como Oracle Cloud Ampere; si se despliega en otro proveedor, habría que investigar qué arquitectura usan).
+2.  **Autenticación y Push (Docker Hub):** El pipeline inicia sesión en Docker Hub utilizando un **Access Token** seguro. A continuación, empaqueta el código en una imagen Docker y la sube a un registro **privado**.
+3.  **Trigger Webhook:** Ejecuta el comando `curl` disfrazado con un *User-Agent* de navegador, adjuntando las llaves de Zero Trust para ordenar a Portainer que inicie la actualización. (Para que esto funcione, Portainer también ha sido configurado con su propio Access Token para poder descargar la imagen).
+* **¿Por qué usar Access Tokens en vez de contraseñas?** Al mantener la imagen de Docker privada (vital para no exponer el código fuente a internet), tanto GitHub (para subirla) como Portainer (para descargarla) necesitan autenticarse de alguna manera. Utilizar **Access Tokens** independientes en lugar de la contraseña principal aplica el principio de seguridad de *Mínimo Privilegio*. Si alguno de los dos entornos se viera comprometido, puedes revocar ese token específico al instante sin perder tu cuenta de Docker ni afectar a otros servicios.
 
-> **📸 [INSERTA AQUÍ LA CAPTURA]:** Código YAML del pipeline o una captura de GitHub Actions mostrando los pasos completados con éxito (en verde).
+> **<img width="1434" height="761" alt="image" src="https://github.com/user-attachments/assets/40dbaaff-4665-4761-a86c-c81c387a8596" />
+
